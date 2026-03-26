@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Calculator</title>
+</head>
+<body>
+    <form action="" method="get">
+        <table border="1">
+            <tr>
+                <td colspan="4"><input type="number" name="display" value =""/></td>
+            </tr>
+        <tr align="center">
+            <td><input type="button" value="1" name="1" onclick="inputDigit('1')"/></td>
+            <td><input type="button" value="2" name="2" onclick="inputDigit('2')"/></td>
+            <td><input type="button" value="3" name="3" onclick="inputDigit('3')"/></td>
+            <td><input type="button" value="+" name="+" onclick="inputOperator('+')"/></td>
+        </tr>
+        <tr align="center">
+            <td><input type="button" value="4" name="4" onclick="inputDigit('4')"/></td>
+            <td><input type="button" value="5" name="5" onclick="inputDigit('5')"/></td>
+            <td><input type="button" value="6" name="6" onclick="inputDigit('6')"/></td>
+            <td><input type="button" value="-" name="-" onclick="inputOperator('-')"/></td>
+        </tr>
+        <tr align="center">
+            <td><input type="button" value="7" name="7" onclick="inputDigit('7')"/></td>
+            <td><input type="button" value="8" name="8" onclick="inputDigit('8')"/></td>
+            <td><input type="button" value="9" name="9" onclick="inputDigit('9')"/></td>
+            <td><input type="button" value="*" name="*" onclick="inputOperator('*')"/></td>
+        </tr>
+        <tr align="center">
+            <td><input type="button" value="." name="." onclick="inputDecimal()"/></td>
+            <td><input type="button" value="/" name="/" onclick="inputOperator('/')"/></td>
+            <td><input type="button" value="=" name="=" onclick="performCalculation()"/></td>
+        </tr>
+        <tr align="center">
+            <td colspan="2"><input type="button" value="clear" name="clear" onclick="clearDisplay()"/></td>
+            <td colspan="2"><input type="button" value="enter" name="enter" onclick="performCalculation()"/></td>
+        </tr>
+        </table>
+        <script>
+        var display = document.querySelector('input[name="display"]');
+        var currentValue = 0;
+        var operator = '';
+        var waitingForOperand = false;
+
+        function inputDigit(digit) {
+            if (waitingForOperand) {
+                display.value = digit;
+                waitingForOperand = false;
+            } else {
+                display.value = display.value === '' ? digit : display.value + digit;
+            }
+        }
+
+        function inputOperator(nextOperator) {
+            var inputValue = parseFloat(display.value);
+            if (currentValue === 0 && !isNaN(inputValue)) {
+                currentValue = inputValue;
+            } else if (operator && !isNaN(inputValue)) {
+                var result = calculate(currentValue, inputValue, operator);
+                display.value = String(result);
+                currentValue = result;
+            }
+            waitingForOperand = true;
+            operator = nextOperator;
+        }
+
+        function calculate(firstValue, secondValue, op) {
+            switch (op) {
+                case '+': return firstValue + secondValue;
+                case '-': return firstValue - secondValue;
+                case '*': return firstValue * secondValue;
+                case '/': return firstValue / secondValue;
+                default: return secondValue;
+            }
+        }
+
+        function inputDecimal() {
+            if (waitingForOperand) {
+                display.value = '0.';
+                waitingForOperand = false;
+            } else if (display.value.indexOf('.') === -1) {
+                display.value += '.';
+            }
+        }
+
+        function clearDisplay() {
+            display.value = '';
+            currentValue = 0;
+            operator = '';
+            waitingForOperand = false;
+        }
+
+        function performCalculation() {
+            var inputValue = parseFloat(display.value);
+            if (!isNaN(inputValue) && currentValue !== 0 && operator) {
+                var result = calculate(currentValue, inputValue, operator);
+                display.value = String(result);
+                currentValue = 0;
+                operator = '';
+                waitingForOperand = true;
+            }
+        }
+    </script>
+    </form>
+</body>
+</html>
